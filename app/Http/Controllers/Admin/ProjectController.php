@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Project;
+use App\Models\Technology;
 use App\Models\Type;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
@@ -34,7 +35,7 @@ class ProjectController extends Controller
      */
     public function create(Project $project)
     {
-        return view('admin.projects.creation', compact('project'), ['types' => Type::all()]);
+        return view('admin.projects.creation', compact('project'), ['types' => Type::all(), 'technologies' => Technology::all()]);
     }
 
     /**
@@ -51,12 +52,14 @@ class ProjectController extends Controller
             'description'=>'required|min:25|max:1000',
             'image'=>'url',
             'creation_date'=>'date|before:tomorrow',
-            'type_id' => 'required|exists:types,id'
+            'type_id' => 'required|exists:types,id',
+            'technologies' => 'array|exists:technologies,id',
         ]);
         $newProject = new Project();
         $newProject->fill($data);
         $newProject->slug = Str::slug($newProject->title);
-        $newProject->image = Storage::put('public', $data['image']);                                                                                                             
+        $newProject->image = Storage::put('public', $data['image']);  
+        $newProject->technologies()->sync($data['technologies']);                                                                                                      
         $newProject->save();
         return redirect()->route('admin.projects.show', $newProject->slug)->with('message', "creato con successo");
 
@@ -84,7 +87,7 @@ class ProjectController extends Controller
      */
     public function edit(Project $project)
     {
-        return view('admin.projects.edit', compact('project'), ['types' => Type::all()]);
+        return view('admin.projects.edit', compact('project'), ['types' => Type::all(), 'technologies' => Technology::all()]);
     }
 
     /**

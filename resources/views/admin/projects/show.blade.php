@@ -10,7 +10,11 @@
             <h2 class="card-title">{{$project->title}}</h2>
             <p class="card-text">{{$project->description}}</p>
             <h6 class="card-subtitle mb-2 text-muted">{{$project->creation_date}}</h6>
-            <h6 class="card-subtitle mb-2 text-muted">Tipo di progetto: {{$project->type->name}}</h6> 
+            <h6 class="card-subtitle mb-2 text-muted">Tipo di progetto: {{$project->type->name}}</h6>
+            @foreach ($project->tecnologies as $technology)
+                <span class="badge rounded-pill text-bg-primary p-3">{{ $technology->name }}</span>
+            @endforeach
+
             
         </div>
         <div class="button-group mb-4">

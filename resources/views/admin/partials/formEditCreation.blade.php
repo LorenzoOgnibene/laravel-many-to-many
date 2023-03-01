@@ -8,7 +8,7 @@
     @error('title')
     <div class="invalid-feedback">{{$message}}</div>
     @enderror
-    
+
     <label for="floatingSelect">Seleziona il tipo di progetto</label>
     <select name="type_id" class="form-select my-2">
         @foreach ($types as $type)
@@ -16,9 +16,11 @@
         @endforeach
     </select>
 
-    @error('title')
-    <div class="invalid-feedback">{{$message}}</div>
-    @enderror
+    @foreach($technologies as $technology)
+        <input type="checkbox" name="technologies[]" class="form-check-input" value="{{$technology->id}}">
+        <label  class="form-check-label ms-2">{{ $technology->name }}</label>
+    @endforeach
+    
 
 
     <label for="description" class="form-label">Descrizione</label>
