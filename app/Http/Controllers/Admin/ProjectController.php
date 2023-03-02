@@ -59,8 +59,11 @@ class ProjectController extends Controller
         $newProject->fill($data);
         $newProject->slug = Str::slug($newProject->title);
         $newProject->image = Storage::put('public', $data['image']);  
-        $newProject->technologies()->sync($data['technologies']);                                                                                                      
         $newProject->save();
+        
+        $newProject->tecnologys()->sync($data['technologies'] ?? []);                                                                                                      
+
+        
         return redirect()->route('admin.projects.show', $newProject->slug)->with('message', "creato con successo");
 
     }
@@ -76,7 +79,7 @@ class ProjectController extends Controller
         if(session('message')){
             Alert::toast(session('message'), 'success');
         }
-        return view('admin.projects.show', compact('project'));
+        return view('admin.projects.show', compact('project'), ['types' => Type::all(), 'technologies' => Technology::all()]);
     }
 
     /**
@@ -105,10 +108,13 @@ class ProjectController extends Controller
             'description'=>'required|min:25|max:2000',
             'image'=>'url',
             'creation_date'=>'date:d-m-Y|before:tomorrow',
-            'type_id' => 'required|exists:types,id'
+            'type_id' => 'required|exists:types,id',
+            'technologies' => 'array|exists:technologies,id'
         ]);
+        
         $project->slug = Str::slug($project->title);
         $project->update($data);
+        $project->tecnologys()->sync($data['technologies'] ?? []); 
         return redirect()->route('admin.projects.show', $project->slug);
     }
 
